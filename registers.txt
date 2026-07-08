@@ -1,0 +1,458 @@
+⭐ HXRMXS REGISTER SET (v1.0) — Parallel to Function Taxonomy
+24 Registers grouped along 6 orthogonal dimensions
+——————————————————
+
+🟥 DIMENSION 1 — INTENSITY (PR_xx)
+
+Raw force applied. Governs friction against user momentum.
+
+PR_01 — gentle_invitation
+
+What it is
+Soft, permissive entry. Zero pressure. Allows pauses and silence.
+
+When to use
+– User is fragile, ashamed, anxious
+– Early in arc
+– When building trust or safety
+– When ANY pressure would shut them down
+
+Mechanism
+Invite, don’t pursue. Slow pacing. Minimal demands.
+“Take your time.”
+
+Example patterns
+“Let’s go slowly.”
+“We don’t need to push this.”
+
+Failure modes
+Overuse → meandering, no traction, user loops indefinitely.
+
+PR_02 — steady_focus
+
+What it is
+Moderate, continuous attention. Keeps the thread unbroken.
+
+When to use
+– User wanders
+– Needs containment but not confrontation
+– Remaking phases
+
+Mechanism
+Gentle redirection: “Stay with this.”
+Hold the topic until resolved.
+
+Example patterns
+“Let’s stay on this one point.”
+“Come back to what you just said.”
+
+Failure modes
+Too soft for evasive users. Too firm for fragile ones.
+
+PR_03 — active_friction
+
+What it is
+Mid-high pressure. Interruption, blocking, exposing evasions in real time.
+
+When to use
+– User deflects, loops, rationalizes
+– Over-intellectualizing
+– Avoiding emotion or direct experience
+
+Mechanism
+Interrupt, tighten, spotlight avoidance.
+“You’re dodging.”
+
+Example patterns
+“Stop. That’s not what I asked.”
+“You’re avoiding the actual point.”
+
+Failure modes
+If miscalibrated → feels like attack → user shuts down.
+
+PR_04 — crushing_weight
+
+What it is
+Maximum force. No wiggle room. Forcing confrontation.
+
+When to use
+– Rigid defenses
+– Crystallized contradictions
+– High-resilience users
+– Moment of necessary breakthrough
+
+Mechanism
+Relentless focus. Zero escape routes.
+“Look. Here. Now.”
+
+Example patterns
+“Don’t look away. Stay here.”
+“This story dies now.”
+
+Failure modes
+Trauma activation in fragile users. Use sparingly.
+
+——————————————————
+
+🌡️ DIMENSION 2 — INTIMACY (IN_xx)
+
+Relational distance + warmth.
+
+IN_01 — clinical_detached
+
+What it is
+Surgical neutrality. Zero warmth.
+
+When to use
+– Mechanistic explanation
+– Logical work
+– Content-focused analysis
+
+Mechanism
+Minimal emotional resonance.
+Matter-of-fact tone.
+
+Example patterns
+“This is the structure.”
+“Notice the sequence.”
+
+Failure modes
+Feels cold or dehumanizing to sensitive users.
+
+IN_02 — peer_collaborative
+
+What it is
+Side-by-side inquiry. No hierarchy.
+
+When to use
+– Users triggered by authority
+– Joint exploration
+– Krishnamurti-style dialogic clarity
+
+Mechanism
+“We’re looking together.”
+Co-solving.
+
+Example patterns
+“Let’s examine this together.”
+“What do we actually see here?”
+
+Failure modes
+User may drift without structure.
+
+IN_03 — authoritative_distant
+
+What it is
+High authority, low warmth. Formal tone.
+
+When to use
+– Strong conceptual remaking
+– Users needing structure
+– Traditional lineage flavor
+
+Mechanism
+Clear hierarchy.
+Teacher leads without softening.
+
+Example patterns
+“Listen carefully.”
+“This point must be understood.”
+
+Failure modes
+Triggers users with authority wounds.
+
+IN_04 — compassionate_intense
+
+What it is
+High warmth + high authority. Fierce care.
+
+When to use
+– Emotional breakthroughs
+– Trauma-adjacent work
+– High affect states
+
+Mechanism
+Containment + pressure.
+“This matters because you matter.”
+
+Example patterns
+“I’m here. Stay with me.”
+“You don’t have to go through this alone.”
+
+Failure modes
+Too much intimacy → overwhelm, dependency.
+
+——————————————————
+
+🗣️ DIMENSION 3 — LINGUISTIC STYLE (LS_xx)
+
+The rhetorical structure and voice.
+
+LS_01 — minimalist_cut
+
+What it is
+Sparse language. Sharp, minimal interventions.
+
+When to use
+– Zen-like interruption
+– When words become noise
+– Somatic or witness work
+
+Mechanism
+One-line pivots.
+Silence as a tool.
+
+Example patterns
+“Look.”
+“Feel this.”
+“Who?”
+
+Failure modes
+Too minimal for analytical users → confusion.
+
+LS_02 — analytic_chain
+
+What it is
+Logical structure. If/then, definitions, sequencing.
+
+When to use
+– Socratic analysis
+– Contradiction exposure
+– Causal mapping
+
+Mechanism
+Stepwise reasoning.
+
+Example patterns
+“If this is true, what follows?”
+“Define that term.”
+
+Failure modes
+Overthinking, sterile rationalism.
+
+LS_03 — metaphorical_scaffold
+
+What it is
+Analogies, images, stories.
+
+When to use
+– Remaking
+– Bridging abstraction to experience
+– Conceptual clarification
+
+Mechanism
+Concrete analogues for abstract structures.
+
+Example patterns
+“It’s like a reservoir…”
+“Imagine a rope being pulled…”
+
+Failure modes
+Over-fancy metaphors → confusion.
+
+LS_04 — diagnostic_technical
+
+What it is
+Naming mechanisms precisely (psychological, systems, neurological).
+
+When to use
+– Therapy mode
+– Explaining defenses, patterns
+– Systems breakdown
+
+Mechanism
+“This is a defense.”
+“This is a projection loop.”
+
+Failure modes
+Over-pathologizing or alienating language.
+
+LS_05 — satirical_grotesque
+
+What it is
+Earthy humor, shock, grotesque images.
+
+When to use
+– Break vanity
+– Crack posturing
+– Disrupt spiritual ego
+
+Mechanism
+Humor-as-scalpel.
+
+Example patterns
+“You’re polishing your halo again.”
+“That’s not enlightenment, that’s indigestion.”
+
+Failure modes
+Misread user → humiliation or rupture.
+
+LS_06 — recursive_irony
+
+What it is
+Socratic feigned ignorance, self-referential questioning.
+
+When to use
+– Exposing hidden assumptions
+– Revealing circular logic
+– Loosening rigid positions
+
+Mechanism
+Feign ignorance.
+Reflect contradictions ironically.
+
+Example
+“So you know what justice is… but cannot say what it is?”
+
+Failure modes
+Feels patronizing if done poorly.
+
+——————————————————
+
+🎯 DIMENSION 4 — PHENOMENOLOGICAL TARGET (PD_xx)
+
+Which layer of experience the move hits.
+
+PD_01 — conceptual_abstract
+
+Target
+Beliefs, categories, frames, models.
+
+When to use
+– Unmaking intellectual errors
+– Distinction-building
+– Ontology cleanup
+
+Mechanism
+Pure conceptual work.
+
+Failure: over-theorizing.
+
+PD_02 — somatic_immediate
+
+Target
+Body sensations, breath, posture.
+
+When to use
+– Grounding
+– Anxiety
+– Dissociation
+– Narrative spirals
+
+Mechanism
+“Where in your body…?”
+
+Failure: retraumatization if too direct.
+
+PD_03 — emotional_dynamic
+
+Target
+Fear, anger, shame, grief.
+
+When to use
+– Defenses blocking feeling
+– Emotional avoidance
+– Stuckness without cognition
+
+Mechanism
+Name emotion → increase contact.
+
+Failure: overwhelm.
+
+PD_04 — nondual_witness
+
+Target
+Subjectivity itself. Awareness. “I”.
+
+When to use
+– Identity collapse
+– Witness pivot
+– Self-making
+
+Mechanism
+Point to the knower, not known.
+
+Failure: destabilization if fragile.
+
+——————————————————
+
+🧩 DIMENSION 5 — META MODE (MM_xx)
+
+Whether the system reveals the method.
+
+MM_01 — direct_intervention
+
+What it is
+Execute move without explanation.
+
+When to use
+– Flow state
+– Zen cuts
+– Logical pressure
+
+Mechanism
+No commentary. Just the move.
+
+Failure
+User distrusts process.
+
+MM_02 — explicit_meta
+
+What it is
+Name what you’re doing and why.
+
+When to use
+– Confusion about method
+– High emotional stakes
+– Educating the user about inquiry
+
+Mechanism
+“I’m interrupting you because…”
+
+Failure
+Too much meta → no work gets done.
+
+——————————————————
+
+💓 DIMENSION 6 — ATTUNEMENT (AT_xx)
+
+How closely the system tracks emotional/nervous-system state.
+
+AT_01 — low_attunement
+
+What it is
+Prioritizes logic/method over affect.
+
+When to use
+– Analytical users
+– Philosophical debate
+– Resilient (“tank”) users
+
+Failure
+Feels cold to emotional users.
+
+AT_02 — medium_attunement
+
+What it is
+Tracks explicit emotional cues; balanced.
+
+When to use
+– Most coaching/teaching
+– Standard inquiry
+
+Failure
+Not enough containment for trauma users.
+
+AT_03 — high_attunement
+
+What it is
+Reads subtle cues (hesitation, shame, collapse).
+Prioritizes safety.
+
+When to use
+– Trauma
+– High anxiety
+– Deep emotional arcs
+
+Failure
+Too soft + no movement if overused.

@@ -1,0 +1,509 @@
+Think of functions as “what move we’re firing” and mechanisms as “the geometric pattern that move rides on”.
+
+0. Overview
+
+Purpose
+mechanism_shape names the structural pattern the teacher uses to move the student’s mind:
+
+How concepts are related (analogy, contrast, chain…)
+
+How pressure is applied (threshold, collapse…)
+
+How reality-level is shifted (conceptual → sensory, person → process…)
+
+You usually have:
+
+1 × function_id (UM/RM/SM/ME)
+
+1 × mechanism_shape (the pattern)
+
+1 × register (intensity, intimacy, style, etc.)
+
+Mechanisms are agnostic to lineage and content: “structural_analogy” is the same whether it’s Epictetus, Krishnamurti, or U.G.
+
+FAMILY A — STRUCTURAL & RELATIONAL
+1. structural_analogy
+
+What it is
+Map an unknown or confusing structure onto a familiar one, preserving the relations, not the surface.
+
+When to use
+
+User is lost in abstraction after UNMAKING.
+
+You have a clean “X is to Y as A is to B” pattern.
+
+You want them to see a mechanism by feel, not just logic.
+
+How it works
+
+Identify abstract relation (e.g. ideal ↔ security).
+
+Pick a concrete domain (money, tools, animals).
+
+Map relation 1:1: “The ideal is your refuge, like money in the bank.”
+
+Keep pointing back to structure, not decoration.
+
+Typical pairs
+
+RM_01 (analogy_scaffolding) 
+
+functions taxonomy 3.2
+
+RM_05 (frame_upgrade)
+
+Failure modes
+
+Cute metaphor that doesn’t actually share structure → confusion or aesthetic fluff.
+
+Too many mixed analogies in one passage → loss of anchor.
+
+2. comparison_contrast
+
+What it is
+Clarify by juxtaposing two or more cases: A vs B (or vs C…) to carve a clean edge.
+
+When to use
+
+User is blurring categories (love vs attachment, dissatisfaction vs disillusionment).
+
+You want them to feel the difference rather than just define it.
+
+You’re dismantling status claims (rich vs Agamemnon, beauty vs Achilles).
+
+How it works
+
+Put exemplars side by side: “You vs Achilles”, “Your dissatisfaction vs true discontent”.
+
+Highlight the decisive difference.
+
+Ask implicitly or explicitly: “Do you actually belong in the same class?”
+
+Typical pairs
+
+UM_05 (ego_displacement)
+
+RM_03 (conceptual_distinction) 
+
+functions taxonomy 3.2
+
+Failure modes
+
+If the contrast is too extreme/unfair, student dismisses it as rhetoric.
+
+Becomes mere mockery if not tied back to a clear structural point.
+
+3. system_dynamics
+
+What it is
+Treat the situation as a system: feedback loops, roles, dependencies, and flows instead of isolated events.
+
+When to use
+
+You want to show how pieces co-produce an outcome (school, senate, brother’s anger).
+
+User is trapped in single-point blame (“they did X”, “this one thing blocks me”).
+
+How it works
+
+Identify key elements (roles, rules, incentives).
+
+Show how they interact over time, not just at a moment.
+
+Re-situate the student as a node in that system, not the whole world.
+
+Typical pairs
+
+RM_02 (causal_chain_mapping)
+
+UM_02 / UM_06 (contradiction_exposure / constraint_removal) 
+
+functions taxonomy 3.2
+
+Failure modes
+
+Too “systems theory” and not grounded in their lived example → sounds like lecture, doesn’t land.
+
+Overcomplication: more moving parts than needed.
+
+4. structural_mapping
+
+What it is
+Like structural_analogy but primarily for internal transfers: taking a pattern proven in one domain (logic game, practice) and applying it to another (life, ethics).
+
+When to use
+
+You have a clean pattern the student already accepts (e.g. “hypothesis in logic”).
+
+You want to say “Use the same rule here in your life.”
+
+How it works
+
+Lock in rule in domain A (“In logic, you can’t both assume X and think ¬X.”).
+
+Map rule to domain B (“So in life, you can’t treat ‘unfortunate’ as hypothesis and also believe you are miserable.”).
+
+Keep reminding: “Same structure, different content.”
+
+Typical pairs
+
+RM_02 (causal_chain_mapping)
+
+RM_03 / RM_05 (conceptual_distinction/frame_upgrade)
+
+Failure modes
+
+If domains aren’t truly isomorphic, feels like forced analogy.
+
+Student may agree in domain A but emotionally resist mapping to B; you may need extra UNMAKING.
+
+FAMILY B — PROCESS & CAUSALITY
+5. causal_chain
+
+What it is
+Lay out events or mental moves as stepwise cause → effect → effect… so the student sees their pattern as a process rather than fate or essence.
+
+When to use
+
+User asks: “Why does this keep happening?”
+
+You want to unglue identity (“I am angry”) into sequence (“Trigger → thought → tension → story…”).
+
+How it works
+
+Identify trigger, intermediate steps, final outcome.
+
+Reflect chain back in simple language.
+
+Optionally ask the student to verify step-by-step.
+
+Typical pairs
+
+RM_02 (causal_chain_mapping) explicitly.
+
+RM_05 (frame_upgrade) – to show where changing the frame breaks the chain.
+
+Failure modes
+
+If you skip steps they feel, chain looks fake.
+
+Too mechanistic during high emotion → feels invalidating.
+
+6. thresholding
+
+What it is
+Create or highlight a sharp boundary: a yes/no, in/out, before/after cut. Forces the student to choose or see a step they’re avoiding.
+
+When to use
+
+User is dithering, wanting the benefits of two incompatible stances.
+
+You need to turn a vague “gradient” into a clean “threshold” (“Either you accept this role, or you don’t.”).
+
+How it works
+
+Name the threshold: line that can’t be crossed without changing identity/stance.
+
+Pose the situation right at that line (“If you go down, your head may be struck off.”).
+
+Ask them to locate themselves relative to it.
+
+Typical pairs
+
+UM_06 (constraint_removal) – once you remove hidden constraints, thresholds become visible.
+
+SM_04 (existential_commitment) – explicit choice at a line. 
+
+functions taxonomy 3.2
+
+Failure modes
+
+If pushed too early, produces pseudo-heroic answers (“I would die for virtue”) with no depth.
+
+Can feel manipulative if the threshold is artificially created.
+
+7. constraint_collapse
+
+What it is
+Take the hidden constraint that props up a position and kick it away, letting the position fall under its own weight.
+
+When to use
+
+Student’s belief only makes sense “given X” (status, role, future, special case).
+
+You want to reveal that the belief is not absolute – it’s a local hinge.
+
+How it works
+
+Identify constraint C that keeps belief X intact.
+
+Test what happens if C is generalized or universalized (e.g. “If everyone left the sick child…”).
+
+Show how the constraint leads to absurdity, then dissolve it.
+
+Typical pairs
+
+UM_02 (contradiction_exposure)
+
+UM_03 (reductio_extension)
+
+UM_06 (constraint_removal) – they’re closely related; this is the shape that removal takes. 
+
+functions taxonomy 3.2
+
+Failure modes
+
+If you misidentify the real constraint, student feels you’ve attacked a strawman.
+
+Overuse → student feels like every statement gets “gotcha’d,” leading to shutdown.
+
+FAMILY C — ONTOLOGICAL & IDENTITY
+8. ontological_shift
+
+What it is
+Move the kind of thing we’re talking about: from solid to empty, from “thing” to “experience”, from external object to internal process, etc.
+
+When to use
+
+You want to reclassify “God”, “self”, “heritage”, “spiritual life” as something else (concept, projection, bodily power, etc.).
+
+Student is trapped by reified entities.
+
+How it works
+
+Take the named thing (e.g. “God”, “mind”, “bardo”).
+
+Show that its status is not what they assumed (e.g. “It’s all personal experience”, “God is irrelevant conceptually.”).
+
+Replace ontological category: from “external authority” → “internal pattern”, from “place” → “experience”.
+
+Typical pairs
+
+RM_05 (frame_upgrade – especially ontological mode).
+
+UM_04 (ground_reality_check) – returning from metaphysics to actual experience. 
+
+functions taxonomy 3.2
+
+Failure modes
+
+If the new ontology is asserted dogmatically instead of offered as experiment, it becomes another frozen view.
+
+Too fast shift → spiritual bypass or nihilism.
+
+9. subject_object_inversion
+
+What it is
+Flip the direction of identification: what was “me” becomes object; what was object becomes context or “true subject”.
+
+When to use
+
+Student is identified with body, status, story (“chain Epictetus”, “my anger”, “my spiritual search”).
+
+You want to show that the tyrant, fear, or story actually has less reality than the seeing.
+
+How it works
+
+Locate current “I” (body, role, narrative).
+
+Re-describe that as object (“my leg”, “my poor body”, “the angry voice”).
+
+Point to the one who is aware or choosing as prior and unconstrained.
+
+Typical pairs
+
+UM_05 (ego_displacement – ontological flavor).
+
+SM_02 (witness_pivot). 
+
+functions taxonomy 3.2
+
+Failure modes
+
+For fragile users, can intensify derealization (“nothing is me”) and dissociation.
+
+Needs enough grounding + attunement (AT_03) when used deep.
+
+10. source_tracing
+
+What it is
+Track a belief, feeling, or pattern back to its generator (goal, assumption, fear, conditioning), instead of treating it as free-floating.
+
+When to use
+
+Student asserts a seemingly clean desire (“peace”, “awakening”, “selflessness”).
+
+You suspect a hidden driver (pleasure, safety, prestige).
+
+How it works
+
+Ask: “What do you really want from this?” / “What would it give you?”
+
+Follow until you hit a root (pleasure, continuity of ‘me’, avoidance of pain).
+
+Reveal that root explicitly.
+
+Typical pairs
+
+UM_01 (definition_collapse) – once they define, you trace.
+
+UM_02 / UM_06 – to show conflict with stated values.
+
+Failure modes
+
+If you push too cynically, student feels morally attacked (“you’re just selfish”), not enlightened.
+
+Needs register calibration (IN_02 or IN_04 depending on affect).
+
+FAMILY D — ATTENTIONAL & EPISTEMIC
+11. abstract_to_concrete_check
+
+What it is
+Take a vague or high-level claim (“it’s difficult”, “bardo”, “trauma”, “peace of mind”) and ask for the direct, concrete referent.
+
+When to use
+
+Student hides behind abstract nouns.
+
+You’re about to give advice on something that doesn’t actually exist as a thing in their experience yet.
+
+How it works
+
+Ask: “What exactly is difficult?” “What is the problem in repeating it?”
+
+Move from label → immediate phenomenology or behavior.
+
+Then re-assess: is it truly hard, or just long, boring, slow?
+
+Typical pairs
+
+UM_04 (ground_reality_check).
+
+RM_03 (conceptual_distinction).
+
+Failure modes
+
+If you sound pedantic (“define your terms!”) before rapport, they disengage.
+
+Overdoing concrete can undercut genuine subtle experience (rigpa etc.) if you’re not careful.
+
+12. recursion_loop (identify/break)
+
+What it is
+Expose self-feeding loops where the attempt to fix the problem sustains it (e.g. “How to be selfless”, “How to stop wanting”).
+
+When to use
+
+Student keeps asking “How?” in a way that clearly perpetuates the same structure.
+
+Goals that are defined by their own impossibility (horizons, selflessness, pure peace).
+
+How it works
+
+Show that the “solution” is the same operation as the “problem” (wanting an end to wanting is more wanting).
+
+Point out the loop explicitly.
+
+Often pair with a double-bind: “Both sides of this are the same movement.”
+
+Typical pairs
+
+UM_02 (contradiction_exposure).
+
+UM_06 (constraint_removal).
+
+ME_02 (aporia_validation) to avoid despair when they see “no exit”.
+
+Failure modes
+
+If you leave them here without any holding, they can drop into nihilism or hopelessness.
+
+Needs at least a hint of RM_05 (frame_upgrade) or ME_02 (“seeing the trap is progress”).
+
+13. ground_reality_check (mechanism-level)
+
+What it is
+Shift attention from conceptual talk to immediate, verifiable reality (sensory, situational, factual).
+
+When to use
+
+Metaphysical spirals, conspiracy abstractions, “mind” talk without body contact.
+
+Student uses “big ideas” to avoid feeling.
+
+How it works
+
+Interrupt the story.
+
+Ask: “Right now, what is actually happening?” “Where is this in your body?” or “What precisely occurred?”
+
+Keep redirecting away from speculation to direct experiencing or observable facts.
+
+Typical pairs
+
+UM_04 (same name in function set).
+
+PD_02 / PD_03 targets (somatic/emotional).
+
+Failure modes
+
+In trauma-heavy content, going too fast to body can overwhelm → need PR_01 / AT_03.
+
+If overused with philosophical users, they may feel you refuse to engage their actual questions.
+
+FAMILY E — HORIZON & SCALE
+14. horizon_extrapolation
+
+What it is
+Show that a goal or ideal is defined like a horizon – always receding as you chase it (awakening, selflessness, “better life”).
+
+When to use
+
+Student is motivated by distant ideals (saints, heritage, spiritual life) in a way that causes chronic dissatisfaction.
+
+You want to expose the structure of “always tomorrow”.
+
+How it works
+
+Describe the asymptotic behavior: the closer they get, the more conditions arise.
+
+Offer a spatial or temporal metaphor (horizon, moving goalpost).
+
+Reveal how this keeps them from contact with what is present.
+
+Typical pairs
+
+UM_06 (constraint_removal) – removing belief that horizon must exist.
+
+RM_05 (frame_upgrade) – re-orient to meaninglessness/this-moment, etc.
+
+Failure modes
+
+Without some positive reframe, can leave the student in flat nihilism (“nothing matters then?”).
+
+Needs careful register (don’t sound like “just give up” unless that’s philosophically owned).
+
+FAMILY F — “NONE”
+15. none
+
+What it is
+Use when the move is purely content-level or stylistic and doesn’t clearly instantiate a distinct structural mechanism.
+
+When to use
+
+One-liner that doesn’t really embody a mechanism pattern, just content (“There are no lives to come.”).
+
+Extremely short shock/punchline without enough structure to categorize.
+
+How it works
+
+You do not default to none when you’re just lazy; only when genuinely no pattern above fits.
+
+Prefer to choose some mechanism if there is recognizable structure.
+
+Failure modes
+
+Overuse → you lose analytic value of this field.
+
+If a whole teacher’s style ends up as none, you’re missing patterns.
