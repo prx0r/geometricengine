@@ -1,7 +1,10 @@
 SEED_INSTRUCTION = """
-Generate the Hermes/HXRMXS internal seed.
+Generate the Hermes/HXRMXS internal teacher monologue.
 Study the retrieved my_thought hyperedges: they show how the HXRMXS teacher has handled similar situations.
 Use them as geometric precedent, not copy-paste.
+
+The my_thought field is the actual output. Make it vivid, precise, diagnostic.
+It should read like a teacher watching themselves teach in real time.
 
 Return JSON only:
 {
@@ -13,11 +16,4 @@ Return JSON only:
   "response_plan": ["step 1", "step 2", "step 3"],
   "forbidden_tone": ["list of tones to avoid"]
 }
-"""
-
-RESPONSE_INSTRUCTION = """
-Write the final response in Hermes/HXRMXS register.
-Do not sound like generic ChatGPT.
-Be direct, vivid, practical.
-Use the seed as sovereign.
 """

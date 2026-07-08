@@ -3,8 +3,8 @@ from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import MemorySaver
 
 from src.retrieve import retrieve_mythoughts, aggregate_candidate_nodes
-from src.deepseek_client import deepseek_json, deepseek_text
-from src.hermes_prompts import SEED_INSTRUCTION, RESPONSE_INSTRUCTION
+from src.deepseek_client import deepseek_json
+from src.hermes_prompts import SEED_INSTRUCTION
 from src.weights import save_pathway_run
 
 
@@ -60,13 +60,10 @@ def hermes_seed_node(state: EngineState) -> dict:
     return {"hermes_seed": seed}
 
 
-def response_node(state: EngineState) -> dict:
-    response = deepseek_text({
-        "user_text": state["user_text"],
-        "hermes_seed": state["hermes_seed"],
-        "instruction": RESPONSE_INSTRUCTION,
-    })
-    return {"final_response": response}
+def finalize_node(state: EngineState) -> dict:
+    seed = state.get("hermes_seed", {})
+    my_thought = seed.get("my_thought", "")
+    return {"final_response": my_thought}
 
 
 def save_node(state: EngineState) -> dict:
@@ -79,14 +76,14 @@ builder = StateGraph(EngineState)
 builder.add_node("retrieve", retrieve_node)
 builder.add_node("candidate", candidate_node)
 builder.add_node("hermes_seed", hermes_seed_node)
-builder.add_node("response", response_node)
+builder.add_node("finalize", finalize_node)
 builder.add_node("save", save_node)
 
 builder.set_entry_point("retrieve")
 builder.add_edge("retrieve", "candidate")
 builder.add_edge("candidate", "hermes_seed")
-builder.add_edge("hermes_seed", "response")
-builder.add_edge("response", "save")
+builder.add_edge("hermes_seed", "finalize")
+builder.add_edge("finalize", "save")
 builder.add_edge("save", END)
 
 checkpointer = MemorySaver()
