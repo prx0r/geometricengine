@@ -3,7 +3,6 @@ import json
 from openai import OpenAI
 
 BASE_URL = "https://opencode.ai/zen/go/v1"
-API_KEY = "sk-7dtUVBKJrJcglO9WzdLQZJXwNuz1MucUrDQCZxJjJaH29Q8CqT357DSeFyHV4B75"
 MODEL = "deepseek-v4-flash"
 
 _client = None
@@ -12,8 +11,11 @@ _client = None
 def get_client():
     global _client
     if _client is None:
+        api_key = os.environ.get("DEEPSEEK_API_KEY")
+        if not api_key:
+            raise RuntimeError("DEEPSEEK_API_KEY environment variable not set")
         _client = OpenAI(
-            api_key=os.environ.get("DEEPSEEK_API_KEY", API_KEY),
+            api_key=api_key,
             base_url=BASE_URL,
         )
     return _client
