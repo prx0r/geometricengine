@@ -41,16 +41,24 @@ if user_text:
             with st.expander("Trace"):
                 col1, col2, col3 = st.columns(3)
                 with col1:
-                    st.subheader("Retrieved Hyperedges")
-                    for he in result.get("retrieved_hyperedges", [])[:3]:
-                        st.markdown(f"**{he.get('function_id', '?')}** ({he['similarity']:.2f})")
-                        st.caption(he.get("compression", "")[:120])
+                    st.subheader("Classification")
+                    st.json(result.get("classification", {}))
+                    st.subheader("Selected Pathway")
+                    st.json(result.get("selected_pathway", {}))
                 with col2:
-                    st.subheader("Candidate Nodes")
-                    st.json(result.get("candidate_nodes", {}))
+                    st.subheader("Graph MyThought")
+                    st.json(result.get("graph_mythought", {}))
                 with col3:
-                    st.subheader("Hermes Seed")
-                    st.json(result.get("hermes_seed", {}))
+                    st.subheader("Pathway Candidates")
+                    candidates = result.get("pathway_candidates", [])
+                    for c in candidates[:3]:
+                        st.markdown(f"**{c.get('function_id', '?')}** score={c.get('score', 0):.3f}")
+                    st.subheader("Response Form")
+                    st.write(result.get("response_form", ""))
+                    st.subheader("Retrieved")
+                    for he in result.get("retrieved_hyperedges", [])[:3]:
+                        st.markdown(f"**{he.get('function_id', '?')}** ({he.get('similarity', 0):.2f})")
+                        st.caption(he.get("mythought_text", "")[:120])
 
             st.session_state.last_run_id = result.get("pathway_run_id", "")
 
@@ -67,46 +75,3 @@ if "last_run_id" in st.session_state and st.session_state.last_run_id:
             apply_feedback(DB_PATH, st.session_state.last_run_id, score)
             st.success(f"Saved feedback {score}")
             st.rerun()
-
-    st.write("Regenerate with failure tag:")
-    ftags = ["too_generic", "too_expansive", "wrong_move", "not_hermes", "too_mystical", "too_long"]
-    tag_cols = st.columns(len(ftags))
-    for col, tag in zip(tag_cols, ftags):
-        if col.button(tag, use_container_width=True):
-            result = st.session_state.get("last_result", {})
-            if result:
-                with st.spinner(f"Regenerating ({tag})..."):
-                    try:
-                        new_result = graph.invoke({
-                            "thread_id": st.session_state.thread_id,
-                            "user_text": result.get("user_text", ""),
-                            "failure_tags": [tag],
-                            "rejected_seed": result.get("hermes_seed", {}),
-                            "rejected_response": result.get("final_response", ""),
-                        }, {"configurable": {"thread_id": st.session_state.thread_id}})
-                        new_resp = new_result.get("final_response", "")
-                        st.chat_message("assistant").write(f"_[{tag}]_ {new_resp}")
-                        st.session_state.messages.append({"role": "assistant", "content": f"_[{tag}]_ {new_resp}"})
-                        st.session_state.last_result = new_result
-                        st.session_state.last_run_id = new_result.get("pathway_run_id", "")
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"Regeneration failed: {e}")
-
-    if st.button("Regenerate (plain)", use_container_width=True):
-        result = st.session_state.get("last_result", {})
-        if result:
-            with st.spinner("Regenerating..."):
-                try:
-                    new_result = graph.invoke({
-                        "thread_id": st.session_state.thread_id,
-                        "user_text": result.get("user_text", ""),
-                    }, {"configurable": {"thread_id": st.session_state.thread_id}})
-                    new_resp = new_result.get("final_response", "")
-                    st.chat_message("assistant").write(f"_[regenerated]_ {new_resp}")
-                    st.session_state.messages.append({"role": "assistant", "content": f"_[regenerated]_ {new_resp}"})
-                    st.session_state.last_result = new_result
-                    st.session_state.last_run_id = new_result.get("pathway_run_id", "")
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"Regeneration failed: {e}")

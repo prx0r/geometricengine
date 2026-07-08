@@ -1,5 +1,6 @@
 import json
 import sqlite3
+from typing import Any
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
@@ -48,8 +49,8 @@ def retrieve_mythoughts(query: str, k: int = 6, embeddings_path: str = "data/emb
     for idx in top_k:
         he_id = _embed_ids[idx]
         cur.execute("""
-            SELECT id, mythought_text, compression, lineage, phase,
-                   function_id, mechanism_shape, intent, predicted_impact
+            SELECT id, mythought_text, lineage, phase,
+                   function_id, mechanism_shape, intent, impact_predicted
             FROM mythought_hyperedges WHERE id = ?
         """, (he_id,))
         row = cur.fetchone()
@@ -57,13 +58,13 @@ def retrieve_mythoughts(query: str, k: int = 6, embeddings_path: str = "data/emb
             results.append({
                 "id": row[0],
                 "mythought_text": row[1],
-                "compression": row[2],
-                "lineage": row[3],
-                "phase": row[4],
-                "function_id": row[5],
-                "mechanism_shape": row[6],
-                "intent": row[7],
-                "predicted_impact": row[8],
+                "compression": (row[1] or "")[:200],
+                "lineage": row[2],
+                "phase": row[3],
+                "function_id": row[4],
+                "mechanism_shape": row[5],
+                "intent": row[6],
+                "predicted_impact": row[7],
                 "similarity": float(sims[idx]),
             })
 
@@ -120,13 +121,148 @@ def aggregate_candidate_nodes(hyperedges: list[dict],
     }
 
 
+def score_pathway_candidates(hyperedges: list[dict],
+                             candidate_nodes: dict[str, Any],
+                             classification: dict[str, Any] | None = None,
+                             db_path: str = "data/engine.sqlite") -> list[dict[str, Any]]:
+    cand_functions = dict(candidate_nodes.get("top_functions", []))
+    cand_mechanisms = dict(candidate_nodes.get("top_mechanisms", []))
+    cand_impacts = dict(candidate_nodes.get("top_impacts", []))
+    cand_states = dict(candidate_nodes.get("top_states", []))
+
+    conn = sqlite3.connect(db_path)
+    cur = conn.cursor()
+
+    candidates = []
+    for fn, fn_score in cand_functions.items():
+        mech = None
+        impact = None
+        for m, m_score in cand_mechanisms.items():
+            if m_score > 0:
+                mech = m
+                break
+
+        for imp, imp_score in cand_impacts.items():
+            if imp_score > 0:
+                impact = imp
+                break
+
+        cur.execute("""
+            SELECT from_value, to_value, weight, success_count, failure_count
+            FROM policy_weights
+            WHERE from_type = 'retrieved_function' AND from_value = ?
+        """, (fn,))
+        pw_rows = cur.fetchall()
+
+        policy_bonus = 0.0
+        for _, to_val, weight, succ, fail in pw_rows:
+            total = succ + fail
+            if total > 0:
+                policy_bonus += weight * (succ / total)
+
+        combined_score = fn_score + policy_bonus
+
+        cls_fn_hint = (classification or {}).get("function_hint")
+        cls_phase_hint = (classification or {}).get("phase_hint")
+        cls_mech_hint = (classification or {}).get("mechanism_hint")
+
+        if cls_fn_hint and cls_fn_hint == fn:
+            combined_score += 0.5
+        if cls_mech_hint and cls_mech_hint == (mech or ""):
+            combined_score += 0.3
+
+        from src.models.function import HXRMXSFunction
+        fn_enum = HXRMXSFunction.from_str(fn.replace(" ", "_"))
+        phase = fn_enum.phase.value if fn_enum else (cls_phase_hint or "UNMAKING")
+
+        if cls_phase_hint and cls_phase_hint == phase:
+            combined_score += 0.2
+
+        actions = []
+        traps = []
+        for he in hyperedges:
+            if he.get("function_id") == fn:
+                incs = _get_incidences_for_hyperedge(he["id"], cur)
+                for inc in incs:
+                    if inc["node_type"] == "teaching_action":
+                        actions.append(inc["node_value"])
+                    elif inc["node_type"] == "trap_avoided":
+                        traps.append(inc["node_value"])
+
+        unique_actions = list(dict.fromkeys(actions))
+        unique_traps = list(dict.fromkeys(traps))
+
+        register_intensity = None
+        register_attunement = None
+        for he in hyperedges:
+            if he.get("function_id") == fn:
+                incs = _get_incidences_for_hyperedge(he["id"], cur)
+                for inc in incs:
+                    if inc["node_type"] == "register" and inc["node_value"].startswith("intensity="):
+                        register_intensity = inc["node_value"].split("=")[1]
+                    if inc["node_type"] == "register" and inc["node_value"].startswith("attunement="):
+                        register_attunement = inc["node_value"].split("=")[1]
+
+        candidates.append({
+            "function_id": fn,
+            "mechanism_shape": mech,
+            "phase": phase,
+            "predicted_impact": impact or "unknown",
+            "teaching_actions": unique_actions[:5],
+            "traps_avoided": unique_traps[:3],
+            "register_intensity": register_intensity,
+            "register_attunement": register_attunement,
+            "score": round(combined_score, 4),
+            "retrieval_score": round(fn_score, 4),
+            "policy_bonus": round(policy_bonus, 4),
+        })
+
+    conn.close()
+    candidates.sort(key=lambda c: -c["score"])
+    return candidates
+
+
+def _get_incidences_for_hyperedge(he_id: str, cur) -> list[dict]:
+    cur.execute("""
+        SELECT node_type, node_value, role, weight
+        FROM mythought_incidences WHERE hyperedge_id = ?
+    """, (he_id,))
+    rows = cur.fetchall()
+    return [
+        {"node_type": r[0], "node_value": r[1], "role": r[2], "weight": r[3]}
+        for r in rows
+    ]
+
+
+def select_pathway(pathway_candidates: list[dict[str, Any]]) -> dict[str, Any]:
+    if not pathway_candidates:
+        return {
+            "function_id": None,
+            "mechanism_shape": None,
+            "phase": None,
+            "predicted_impact": "",
+            "teaching_actions": [],
+            "traps_avoided": [],
+            "register_intensity": None,
+            "register_attunement": None,
+            "score": 0.0,
+        }
+    return pathway_candidates[0]
+
+
 if __name__ == "__main__":
     import sys
     query = " ".join(sys.argv[1:]) or "I am spiralling and adding too many modules"
     results = retrieve_mythoughts(query)
     print(f"Top {len(results)} similar my_thoughts:")
     for r in results:
-        print(f"  [{r['similarity']:.3f}] {r['function_id']} | {r['compression'][:100]}")
+        print(f"  [{r['similarity']:.3f}] {r['function_id']} | {r.get('compression', '')[:100]}")
     candidates = aggregate_candidate_nodes(results)
     print(f"\nCandidate functions: {candidates['top_functions']}")
     print(f"Candidate mechanisms: {candidates['top_mechanisms']}")
+    scored = score_pathway_candidates(results, candidates)
+    print(f"\nScored pathways ({len(scored)}):")
+    for s in scored[:3]:
+        print(f"  {s['function_id']:30s} score={s['score']:.3f}  phase={s['phase']}")
+    best = select_pathway(scored)
+    print(f"\nSelected: {best['function_id']}")

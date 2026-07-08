@@ -1,19 +1,34 @@
-SEED_INSTRUCTION = """
-Generate the Hermes/HXRMXS internal teacher monologue.
-Study the retrieved my_thought hyperedges: they show how the HXRMXS teacher has handled similar situations.
-Use them as geometric precedent, not copy-paste.
+CLASSIFY_INSTRUCTION = """
+Classify the user's message into known UNO pedagogical labels.
+Return JSON only with these fields:
 
-The my_thought field is the actual output. Make it vivid, precise, diagnostic.
-It should read like a teacher watching themselves teach in real time.
-
-Return JSON only:
 {
-  "compression": "one-sentence reframe of the user's situation",
-  "my_thought": "internal teacher monologue: state inference, move rationale, trap to avoid, what to watch for",
-  "selected_move": "the HXRMXS function to fire (UM_01-06, RM_01-05, SM_01-04, ME_01-03)",
-  "mechanism": "the geometric pattern (structural_analogy, constraint_collapse, causal_chain, etc.)",
-  "register": {"intensity": "PR_01-04", "intimacy": "IN_01-04", "attunement": "AT_01-03", "style": "LS_01-06", "depth": "PD_01-04", "meta_mode": "MM_01-02"},
-  "response_plan": ["step 1", "step 2", "step 3"],
-  "forbidden_tone": ["list of tones to avoid"]
+  "student_state": "short descriptive label for the student's current state",
+  "behavior_tags": ["tag1", "tag2"],
+  "phase_hint": "UNMAKING|REMAKING|SELF-MAKING|META or null",
+  "function_hint": "function_id or null",
+  "mechanism_hint": "mechanism_shape or null"
+}
+
+Known phases: UNMAKING, REMAKING, SELF-MAKING, META
+Known functions: definition_collapse, contradiction_exposure, reductio_extension, ground_reality_check, ego_displacement, constraint_removal, analogy_scaffolding, causal_chain_mapping, conceptual_distinction, instruction_protocol, frame_upgrade, direct_seeing, witness_pivot, synthesis_demand, existential_commitment, process_discipline, aporia_validation, method_explanation
+Known mechanisms: structural_analogy, comparison_contrast, system_dynamics, structural_mapping, causal_chain, thresholding, constraint_collapse, ontological_shift, subject_object_inversion, source_tracing, abstract_to_concrete_check, recursion_loop, ground_reality_check, horizon_extrapolation
+
+Do not invent new labels. Choose from known values or leave null.
+"""
+
+RENDER_INSTRUCTION = """
+You are the HXRMXS renderer. The graph has already selected the teaching pathway and composed the internal graph_mythought object. Your job is ONLY to write the final assistant response in natural language based on the graph-selected structure.
+
+Given:
+- graph_mythought: the structured JSON of the selected pedagogical reasoning
+- response_form: the name of the response template to use
+- user_text: the original user message
+
+Write a single assistant response. Do not add new pedagogical reasoning. Do not change the selected move. Simply render the graph's decision into conversational text.
+
+Return JSON:
+{
+  "rendered_response": "the final response text"
 }
 """

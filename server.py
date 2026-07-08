@@ -11,8 +11,10 @@ from src.weights import apply_feedback
 
 DB_PATH = "data/engine.sqlite"
 
+
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
     pass
+
 
 class Handler(SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -28,23 +30,25 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 result = graph.invoke(
                     {"thread_id": body.get("thread_id", "web"),
-                     "user_text": body["user_text"],
-                     "failure_tags": body.get("failure_tags", []),
-                     "rejected_seed": body.get("rejected_seed", {}),
-                     "rejected_response": body.get("rejected_response", "")},
+                     "user_text": body["user_text"]},
                     {"configurable": {"thread_id": body.get("thread_id", "web")}},
                 )
-                resp = {"final_response": result.get("final_response", ""),
-                        "pathway_run_id": result.get("pathway_run_id", ""),
-                        "hermes_seed": result.get("hermes_seed", {}),
-                        "candidate_nodes": result.get("candidate_nodes", {}),
-                        "retrieved_hyperedges": result.get("retrieved_hyperedges", []),
-                        "user_text": body.get("user_text", "")}
+                resp = {
+                    "final_response": result.get("final_response", ""),
+                    "graph_mythought": result.get("graph_mythought", {}),
+                    "selected_pathway": result.get("selected_pathway", {}),
+                    "pathway_candidates": result.get("pathway_candidates", [])[:3],
+                    "response_form": result.get("response_form", ""),
+                    "classification": result.get("classification", {}),
+                    "retrieved_hyperedges": result.get("retrieved_hyperedges", [])[:3],
+                    "graph_mythought_id": result.get("pathway_run_id", ""),
+                    "user_text": body.get("user_text", ""),
+                }
             except Exception as e:
                 resp = {"error": str(e)}
             self._json(resp)
         elif self.path == "/api/feedback":
-            apply_feedback(DB_PATH, body["pathway_run_id"], body["score"])
+            apply_feedback(DB_PATH, body["graph_mythought_id"], body["score"])
             self._json({"ok": True})
         else:
             self._json({"error": "not found"}, 404)
@@ -56,10 +60,11 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header("Content-Length", str(len(data_bytes)))
         self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
-        self.wfile.write(data_bytes)
+        self.rfile.read(length)
 
     def log_message(self, fmt, *args):
         pass
+
 
 PORT = int(os.environ.get("PORT", 2222))
 server = ThreadedHTTPServer(("0.0.0.0", PORT), Handler)

@@ -44,7 +44,7 @@ const chat = document.getElementById('chat');
 const input = document.getElementById('input');
 const sendBtn = document.getElementById('send');
 const statusEl = document.getElementById('status');
-let lastRunId = null;
+let lastGraphId = null;
 let lastResult = null;
 let threadId = 'web-' + Date.now();
 let loading = false;
@@ -82,7 +82,7 @@ function addRating(runId) {
     btn.textContent = labels[score];
     btn.onclick = async () => {
       try {
-        await fetch('/api/feedback', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({pathway_run_id:runId, score}) });
+        await fetch('/api/feedback', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({graph_mythought_id:runId, score}) });
         btn.style.opacity = '0.4';
         btn.textContent += ' ✓';
       } catch(e) { console.error('feedback error', e); }
@@ -126,14 +126,17 @@ async function sendMessage(text) {
 
     addMsg('assistant', data.final_response || '(empty response)');
     addTrace({
-      seed: data.hermes_seed || {},
-      retrieved: (data.retrieved_hyperedges || []).slice(0,3),
-      candidates: data.candidate_nodes || {}
+      classification: data.classification || {},
+      graph_mythought: data.graph_mythought || {},
+      selected_pathway: data.selected_pathway || {},
+      pathway_candidates: (data.pathway_candidates || []).slice(0,2),
+      response_form: data.response_form || '',
+      retrieved: (data.retrieved_hyperedges || []).slice(0,2),
     });
 
-    lastRunId = data.pathway_run_id;
+    lastGraphId = data.graph_mythought_id;
     lastResult = data;
-    addRating(lastRunId);
+    addRating(lastGraphId);
 
   } catch(e) {
     const msg = e.name === 'AbortError' ? 'Request timed out (120s). The API might be slow.' : 'Error: ' + e.message;

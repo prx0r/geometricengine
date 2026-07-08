@@ -24,18 +24,42 @@ def ingest(uno_path: str, db_path: str):
         he_id = f"he_{rec.episode_id}_{rec.turn_index}"
         compression = p.my_thoughts[:200] if p.my_thoughts else ""
 
+        prev_user = ""
+        next_user = ""
+        for other in records:
+            if other.episode_id == rec.episode_id:
+                if other.turn_index == rec.turn_index - 1:
+                    prev_user = other.user_text or ""
+                if other.turn_index == rec.turn_index + 1:
+                    next_user = other.user_text or ""
+
         cur.execute("""
             INSERT OR IGNORE INTO mythought_hyperedges
-            (id, source, turn_index, mythought_text, compression, lineage,
-             phase, function_id, mechanism_shape, intent,
-             predicted_impact, impact_confidence, status, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'seed', ?)
+            (id, source, episode_id, turn_id, turn_index,
+             mythought_text, assistant_visible_text, previous_user_text, next_user_text,
+             lineage, phase, function_id, mechanism_shape, intent,
+             impact_predicted, impact_confidence, impact_update, accumulated_insight,
+             status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'seed', ?)
         """, (
-            he_id, "uno", rec.turn_index, p.my_thoughts, compression,
-            p.lineage, p.phase.value if p.phase else None,
+            he_id,
+            "uno",
+            rec.episode_id,
+            f"{rec.episode_id}_t{rec.turn_index}",
+            rec.turn_index,
+            p.my_thoughts,
+            rec.assistant_visible_text,
+            prev_user,
+            next_user,
+            p.lineage,
+            p.phase.value if p.phase else None,
             p.function_id.name if p.function_id else None,
             p.mechanism_shape.value,
-            p.intent, p.impact_predicted, 0.5,
+            p.intent,
+            p.impact_predicted,
+            0.5,
+            p.impact_update,
+            p.accumulated_insight,
             datetime.utcnow().isoformat(),
         ))
         hyperedge_count += 1
@@ -57,9 +81,9 @@ def ingest(uno_path: str, db_path: str):
         if p.impact_predicted:
             incidences.append((f"inc_{he_id}_impact", he_id, "predicted_impact", p.impact_predicted, "predicts", 0.7))
         if reg:
-            for dim, val in [("intensity", reg.intensity.value), ("intimacy", reg.intimacy.value),
-                             ("attunement", reg.attunement.value), ("style", reg.style.value),
-                             ("depth", reg.depth.value), ("meta_mode", reg.meta_mode.value)]:
+            for dim, val in [("intensity", reg.intensity.name), ("intimacy", reg.intimacy.name),
+                             ("attunement", reg.attunement.name), ("style", reg.style.name),
+                             ("depth", reg.depth.name), ("meta_mode", reg.meta_mode.name)]:
                 incidences.append((f"inc_{he_id}_{dim}", he_id, "register", f"{dim}={val}", "modulates", 0.6))
         for tag in p.behavior_tags:
             incidences.append((f"inc_{he_id}_tag_{tag}", he_id, "behavior_tag", tag, "cites", 1.0))
@@ -76,7 +100,6 @@ def ingest(uno_path: str, db_path: str):
             """, (inc_id, hyperedge_id, node_type, node_value, role, weight))
             incidence_count += 1
 
-    # Populate episodes table
     for arc in arcs:
         cur.execute("""
             INSERT OR IGNORE INTO episodes
@@ -85,7 +108,6 @@ def ingest(uno_path: str, db_path: str):
         """, (arc.episode_id, arc.lineage, arc.arc_length,
               arc.final_state, arc.arc_summary[:500] if arc.arc_summary else ""))
 
-    # Populate turns table
     for rec in records:
         ped_json = json.dumps({
             "student_state": rec.pedagogy.student_state,
@@ -106,7 +128,6 @@ def ingest(uno_path: str, db_path: str):
             rec.user_text[:500], rec.assistant_visible_text[:500], ped_json,
         ))
 
-    # Populate transitions table
     for t in transitions:
         cur.execute("""
             INSERT OR IGNORE INTO transitions
