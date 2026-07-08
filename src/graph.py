@@ -1,21 +1,25 @@
+from typing import TypedDict, Any
 from langgraph.graph import StateGraph, END
 from langgraph.checkpoint.memory import MemorySaver
 
 from src.retrieve import retrieve_mythoughts, aggregate_candidate_nodes
 from src.deepseek_client import deepseek_json, deepseek_text
 from src.hermes_prompts import SEED_INSTRUCTION, RESPONSE_INSTRUCTION
-from src.weights import save_pathway_run, apply_feedback
+from src.weights import save_pathway_run
 
 
-class EngineState(dict):
-    thread_id: str = ""
-    user_text: str = ""
-    retrieved_hyperedges: list = []
-    candidate_nodes: dict = {}
-    hermes_seed: dict = {}
-    final_response: str = ""
-    pathway_run_id: str = ""
-    feedback: dict = {}
+class EngineState(TypedDict, total=False):
+    thread_id: str
+    user_text: str
+    retrieved_hyperedges: list[dict[str, Any]]
+    candidate_nodes: dict[str, Any]
+    hermes_seed: dict[str, Any]
+    final_response: str
+    pathway_run_id: str
+    feedback: dict[str, Any]
+    failure_tags: list[str]
+    rejected_seed: dict[str, Any]
+    rejected_response: str
 
 
 def retrieve_node(state: EngineState) -> dict:
@@ -44,6 +48,14 @@ def hermes_seed_node(state: EngineState) -> dict:
         "candidate_nodes": state["candidate_nodes"],
         "instruction": SEED_INSTRUCTION,
     }
+
+    failure_tags = state.get("failure_tags", [])
+    if failure_tags:
+        prompt["failure_tags"] = failure_tags
+        prompt["rejected_seed"] = state.get("rejected_seed", {})
+        prompt["rejected_response"] = state.get("rejected_response", "")
+        prompt["instruction"] += "\n\nAVOID these failures: " + ", ".join(failure_tags)
+
     seed = deepseek_json(prompt)
     return {"hermes_seed": seed}
 

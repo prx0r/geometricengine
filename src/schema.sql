@@ -55,3 +55,40 @@ CREATE TABLE IF NOT EXISTS policy_weights (
   success_count INTEGER DEFAULT 0,
   failure_count INTEGER DEFAULT 0
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_policy_edge
+ON policy_weights(from_type, from_value, to_type, to_value);
+
+CREATE TABLE IF NOT EXISTS episodes (
+  id TEXT PRIMARY KEY,
+  lineage TEXT,
+  arc_length INTEGER,
+  final_state TEXT,
+  arc_summary TEXT
+);
+
+CREATE TABLE IF NOT EXISTS turns (
+  id TEXT PRIMARY KEY,
+  episode_id TEXT,
+  turn_index INTEGER,
+  lineage TEXT,
+  user_text TEXT,
+  assistant_visible_text TEXT,
+  pedagogy_json TEXT
+);
+
+CREATE TABLE IF NOT EXISTS transitions (
+  id TEXT PRIMARY KEY,
+  episode_id TEXT,
+  from_turn INTEGER,
+  to_turn INTEGER,
+  from_state TEXT,
+  to_state TEXT,
+  move_function TEXT,
+  mechanism_shape TEXT,
+  teaching_actions_json TEXT,
+  register_json TEXT,
+  predicted_impact TEXT,
+  impact_update TEXT,
+  prediction_match TEXT
+);

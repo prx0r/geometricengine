@@ -36,7 +36,6 @@ if user_text:
             response_text = result.get("final_response", "")
             st.chat_message("assistant").write(response_text)
             st.session_state.messages.append({"role": "assistant", "content": response_text})
-
             st.session_state.last_result = result
 
             with st.expander("Trace"):
@@ -69,21 +68,43 @@ if "last_run_id" in st.session_state and st.session_state.last_run_id:
             st.success(f"Saved feedback {score}")
             st.rerun()
 
-    if st.button("Regenerate", use_container_width=True):
+    st.write("Regenerate with failure tag:")
+    ftags = ["too_generic", "too_expansive", "wrong_move", "not_hermes", "too_mystical", "too_long"]
+    tag_cols = st.columns(len(ftags))
+    for col, tag in zip(tag_cols, ftags):
+        if col.button(tag, use_container_width=True):
+            result = st.session_state.get("last_result", {})
+            if result:
+                with st.spinner(f"Regenerating ({tag})..."):
+                    try:
+                        new_result = graph.invoke({
+                            "thread_id": st.session_state.thread_id,
+                            "user_text": result.get("user_text", ""),
+                            "failure_tags": [tag],
+                            "rejected_seed": result.get("hermes_seed", {}),
+                            "rejected_response": result.get("final_response", ""),
+                        }, {"configurable": {"thread_id": st.session_state.thread_id}})
+                        new_resp = new_result.get("final_response", "")
+                        st.chat_message("assistant").write(f"_[{tag}]_ {new_resp}")
+                        st.session_state.messages.append({"role": "assistant", "content": f"_[{tag}]_ {new_resp}"})
+                        st.session_state.last_result = new_result
+                        st.session_state.last_run_id = new_result.get("pathway_run_id", "")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Regeneration failed: {e}")
+
+    if st.button("Regenerate (plain)", use_container_width=True):
         result = st.session_state.get("last_result", {})
         if result:
             with st.spinner("Regenerating..."):
                 try:
-                    new_result = graph.invoke(
-                        {
-                            "thread_id": st.session_state.thread_id,
-                            "user_text": result.get("user_text", ""),
-                        },
-                        {"configurable": {"thread_id": st.session_state.thread_id}},
-                    )
-                    new_response = new_result.get("final_response", "")
-                    st.chat_message("assistant").write(f"_[regenerated]_ {new_response}")
-                    st.session_state.messages.append({"role": "assistant", "content": f"_[regenerated]_ {new_response}"})
+                    new_result = graph.invoke({
+                        "thread_id": st.session_state.thread_id,
+                        "user_text": result.get("user_text", ""),
+                    }, {"configurable": {"thread_id": st.session_state.thread_id}})
+                    new_resp = new_result.get("final_response", "")
+                    st.chat_message("assistant").write(f"_[regenerated]_ {new_resp}")
+                    st.session_state.messages.append({"role": "assistant", "content": f"_[regenerated]_ {new_resp}"})
                     st.session_state.last_result = new_result
                     st.session_state.last_run_id = new_result.get("pathway_run_id", "")
                     st.rerun()

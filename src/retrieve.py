@@ -71,29 +71,51 @@ def retrieve_mythoughts(query: str, k: int = 6, embeddings_path: str = "data/emb
     return results
 
 
-def aggregate_candidate_nodes(hyperedges: list[dict]) -> dict:
-    states = {}
+def aggregate_candidate_nodes(hyperedges: list[dict],
+                               policy_weights_path: str = "data/engine.sqlite") -> dict:
     functions = {}
     mechanisms = {}
     impacts = {}
+    states = {}
+    actions = {}
+    registers = {}
+    traps = {}
 
     for he in hyperedges:
-        he_id = he["id"]
+        sim = he.get("similarity", 0.5)
         fname = he.get("function_id")
         mshape = he.get("mechanism_shape")
         impact = he.get("predicted_impact")
+        state = he.get("student_state_from_incidence")
 
         if fname:
-            functions[fname] = functions.get(fname, 0) + 1
+            functions[fname] = functions.get(fname, 0) + sim
         if mshape:
-            mechanisms[mshape] = mechanisms.get(mshape, 0) + 1
+            mechanisms[mshape] = mechanisms.get(mshape, 0) + sim
         if impact:
-            impacts[impact] = impacts.get(impact, 0) + 1
+            impacts[impact] = impacts.get(impact, 0) + sim
+        if state:
+            states[state] = states.get(state, 0) + sim
+
+    # Load policy weights and blend
+    try:
+        import sqlite3
+        conn = sqlite3.connect(policy_weights_path)
+        cur = conn.cursor()
+        cur.execute("SELECT from_value, to_value, weight FROM policy_weights WHERE from_type = 'retrieved_function'")
+        pw_rows = cur.fetchall()
+        conn.close()
+        for from_val, to_val, weight in pw_rows:
+            if from_val in functions and weight > 0:
+                functions[to_val] = functions.get(to_val, 0) + weight * 0.5
+    except Exception:
+        pass
 
     return {
         "top_functions": sorted(functions.items(), key=lambda x: -x[1])[:5],
         "top_mechanisms": sorted(mechanisms.items(), key=lambda x: -x[1])[:5],
         "top_impacts": sorted(impacts.items(), key=lambda x: -x[1])[:5],
+        "top_states": sorted(states.items(), key=lambda x: -x[1])[:5],
         "hyperedges_used": len(hyperedges),
     }
 

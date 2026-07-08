@@ -189,6 +189,16 @@ def build_transitions(records: list[TurnRecord]) -> list[TransitionRecord]:
             nxt = ep_records[i + 1]
             p = curr.pedagogy
 
+            pred = p.impact_predicted
+            obs = nxt.pedagogy.student_state if nxt.pedagogy else ""
+            match = "unknown"
+            if pred == "no_clear_effect" and obs == p.student_state:
+                match = "true"
+            elif pred == "ask_deeper_question" and obs in ("dawning_awareness", "curiosity", "uncertainty"):
+                match = "partial"
+            elif pred == "request_clarification" and "clarif" in obs.lower():
+                match = "true"
+
             trans = TransitionRecord(
                 episode_id=ep_id,
                 from_turn=curr.turn_index,
@@ -201,9 +211,9 @@ def build_transitions(records: list[TurnRecord]) -> list[TransitionRecord]:
                 predicted_impact=p.impact_predicted,
                 observed_user_text=nxt.user_text,
                 to_state=nxt.pedagogy.student_state,
-                impact_update=p.impact_update,
+                impact_update=nxt.pedagogy.impact_update,  # next turn reflects how prediction fared
                 lineage=p.lineage,
-                prediction_match="unknown",
+                prediction_match=match,
             )
             transitions.append(trans)
 
