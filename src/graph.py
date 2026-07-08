@@ -1,0 +1,81 @@
+from langgraph.graph import StateGraph, END
+from langgraph.checkpoint.memory import MemorySaver
+
+from src.retrieve import retrieve_mythoughts, aggregate_candidate_nodes
+from src.deepseek_client import deepseek_json, deepseek_text
+from src.hermes_prompts import SEED_INSTRUCTION, RESPONSE_INSTRUCTION
+from src.weights import save_pathway_run, apply_feedback
+
+
+class EngineState(dict):
+    thread_id: str = ""
+    user_text: str = ""
+    retrieved_hyperedges: list = []
+    candidate_nodes: dict = {}
+    hermes_seed: dict = {}
+    final_response: str = ""
+    pathway_run_id: str = ""
+    feedback: dict = {}
+
+
+def retrieve_node(state: EngineState) -> dict:
+    results = retrieve_mythoughts(state["user_text"], k=6)
+    return {"retrieved_hyperedges": results}
+
+
+def candidate_node(state: EngineState) -> dict:
+    candidates = aggregate_candidate_nodes(state["retrieved_hyperedges"])
+    return {"candidate_nodes": candidates}
+
+
+def hermes_seed_node(state: EngineState) -> dict:
+    prompt = {
+        "user_text": state["user_text"],
+        "retrieved_hyperedges": [
+            {
+                "mythought_text": he["mythought_text"],
+                "function_id": he.get("function_id"),
+                "mechanism_shape": he.get("mechanism_shape"),
+                "intent": he.get("intent"),
+                "predicted_impact": he.get("predicted_impact"),
+            }
+            for he in state["retrieved_hyperedges"]
+        ],
+        "candidate_nodes": state["candidate_nodes"],
+        "instruction": SEED_INSTRUCTION,
+    }
+    seed = deepseek_json(prompt)
+    return {"hermes_seed": seed}
+
+
+def response_node(state: EngineState) -> dict:
+    response = deepseek_text({
+        "user_text": state["user_text"],
+        "hermes_seed": state["hermes_seed"],
+        "instruction": RESPONSE_INSTRUCTION,
+    })
+    return {"final_response": response}
+
+
+def save_node(state: EngineState) -> dict:
+    run_id = save_pathway_run("data/engine.sqlite", dict(state))
+    return {"pathway_run_id": run_id}
+
+
+builder = StateGraph(EngineState)
+
+builder.add_node("retrieve", retrieve_node)
+builder.add_node("candidate", candidate_node)
+builder.add_node("hermes_seed", hermes_seed_node)
+builder.add_node("response", response_node)
+builder.add_node("save", save_node)
+
+builder.set_entry_point("retrieve")
+builder.add_edge("retrieve", "candidate")
+builder.add_edge("candidate", "hermes_seed")
+builder.add_edge("hermes_seed", "response")
+builder.add_edge("response", "save")
+builder.add_edge("save", END)
+
+checkpointer = MemorySaver()
+graph = builder.compile(checkpointer=checkpointer)
