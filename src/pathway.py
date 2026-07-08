@@ -1,88 +1,128 @@
-import sqlite3
-from collections import Counter, defaultdict
+"""Pathway inference using UNO-trained graph weights.
+
+The training (src/train.py) learned edge weights from real UNO transitions.
+This module queries those weights to select a pathway for the current state.
+"""
 from typing import Any
+from src.train import get_state_weights, get_marginal_weights
+from src.retrieve import retrieve_mythoughts
 
 
-def aggregate_incidences(retrieved_hyperedges: list[dict[str, Any]]) -> dict[str, Counter]:
-    buckets = defaultdict(Counter)
+def select_pathway(user_text: str, db_path: str = "data/engine.sqlite") -> dict[str, Any]:
+    """Select a pedagogical pathway for the given user input.
 
-    for he in retrieved_hyperedges:
-        sim = float(he.get("similarity", 1.0))
+    Uses trained UNO transition weights if the state is known,
+    falls back to semantic retrieval + marginal weights for unknown states.
+    """
+    # Step 1: retrieve similar hyperedges for context
+    retrieved = retrieve_mythoughts(user_text, k=6)
 
-        for key in ["lineage", "phase", "function_id", "mechanism_shape", "intent", "predicted_impact"]:
-            value = he.get(key)
-            if value:
-                buckets[key][value] += sim
-
-        buckets["source_ids"][he.get("id", "")] += sim
-
-    return dict(buckets)
-
-
-def load_policy_weights(db_path: str = "data/engine.sqlite") -> dict[tuple, float]:
-    weights: dict[tuple, float] = {}
-    try:
+    # Step 2: try to infer state from retrieved hyperedges
+    state = "unknown"
+    if retrieved:
+        state_counts: dict[str, float] = {}
+        import sqlite3
         conn = sqlite3.connect(db_path)
         cur = conn.cursor()
-        cur.execute("SELECT from_type, from_value, to_type, to_value, weight, success_count, failure_count FROM policy_weights")
-        for row in cur.fetchall():
-            from_type, from_val, to_type, to_val, weight, succ, fail = row
-            total = succ + fail
-            if total > 0:
-                effective = weight * (succ / total)
-            else:
-                effective = weight
-            weights[(from_type, from_val, to_type, to_val)] = effective
+        for he in retrieved[:3]:
+            cur.execute("""
+                SELECT node_value FROM mythought_incidences
+                WHERE hyperedge_id = ? AND node_type = 'student_state'
+                LIMIT 1
+            """, (he["id"],))
+            row = cur.fetchone()
+            if row:
+                s = row[0]
+                state_counts[s] = state_counts.get(s, 0) + he.get("similarity", 0.5)
         conn.close()
-    except Exception:
-        pass
-    return weights
+        if state_counts:
+            state = max(state_counts, key=state_counts.get)
 
+    # Step 3: query trained weights
+    weights = get_state_weights(state, db_path)
 
-def select_weighted_pathway(
-    classified_labels: dict[str, Any] | None = None,
-    retrieved_hyperedges: list[dict[str, Any]] | None = None,
-    incidence_aggregate: dict[str, Counter] | None = None,
-    policy_weights: dict[tuple, float] | None = None,
-) -> dict[str, Any]:
-    classified_labels = classified_labels or {}
-    retrieved_hyperedges = retrieved_hyperedges or []
-    incidence_aggregate = incidence_aggregate or aggregate_incidences(retrieved_hyperedges)
-    policy_weights = policy_weights or load_policy_weights()
+    # Step 4: fallback to marginal if state has no trained functions
+    if not weights["functions"]:
+        marginal = get_marginal_weights(db_path)
+        weights["functions"] = marginal.get("functions", [])
 
-    def top(counter: Counter, default=None):
-        return counter.most_common(1)[0][0] if counter else default
+    # Step 5: pick top function and mechanism
+    top_fn = weights["functions"][0] if weights["functions"] else {"function_id": "RM_01", "weight": 0.0}
+    top_mech = weights["mechanisms"][0] if weights["mechanisms"] else {"mechanism": "none", "weight": 0.0}
+    top_action = weights["teaching_actions"][0] if weights["teaching_actions"] else {"action": "", "weight": 0.0}
 
-    phase = top(incidence_aggregate.get("phase", Counter()), "UNMAKING")
-    function_id = top(incidence_aggregate.get("function_id", Counter()))
-    mechanism_shape = top(incidence_aggregate.get("mechanism_shape", Counter()))
+    # Step 6: determine phase from function
+    phase = "UNMAKING"
+    if top_fn["function_id"]:
+        prefix = top_fn["function_id"].split("_")[0]
+        phase_map = {"UM": "UNMAKING", "RM": "REMAKING", "SM": "SELF-MAKING", "ME": "META"}
+        phase = phase_map.get(prefix, "UNMAKING")
 
-    base_score = sum(retrieved_hyperedges[0].get("similarity", 1.0) for _ in [0]) if retrieved_hyperedges else 0.0
-
-    if function_id and (phase, function_id) in policy_weights:
-        base_score += policy_weights[(phase, function_id)]
-
-    if function_id and mechanism_shape and ("selected_function", function_id, "selected_mechanism", mechanism_shape) in policy_weights:
-        base_score += policy_weights[("selected_function", function_id, "selected_mechanism", mechanism_shape)]
-
-    source_ids = [hid for hid, _ in incidence_aggregate.get("source_ids", Counter()).most_common(5)]
-
-    selected = {
+    pathway = {
         "derived_by": "graph",
+        "state": state,
         "phase": phase,
-        "function_id": function_id,
-        "mechanism_shape": mechanism_shape,
-        "teaching_actions": [],
-        "register": {
-            "intensity": top(incidence_aggregate.get("register_intensity", Counter())),
-            "intimacy": top(incidence_aggregate.get("register_intimacy", Counter())),
-            "attunement": top(incidence_aggregate.get("register_attunement", Counter())),
-            "style": top(incidence_aggregate.get("register_style", Counter())),
-            "depth": top(incidence_aggregate.get("register_depth", Counter())),
-            "meta_mode": top(incidence_aggregate.get("register_meta_mode", Counter())),
+        "function_id": top_fn["function_id"],
+        "mechanism_shape": top_mech["mechanism"],
+        "teaching_action": top_action["action"],
+        "register": weights.get("register", {}),
+        "source_hyperedges": [h["id"] for h in retrieved[:3]],
+        "weights": {
+            "function_weight": round(top_fn["weight"], 3),
+            "mechanism_weight": round(top_mech["weight"], 3),
+            "num_candidates": len(weights["functions"]),
         },
-        "source_hyperedges": source_ids,
-        "score": round(base_score, 4),
     }
 
-    return selected
+    return pathway
+
+
+def make_graph_mythought(user_text: str, pathway: dict[str, Any],
+                          retrieved: list[dict[str, Any]]) -> dict[str, Any]:
+    """Compose the graph_mythought from selected pathway and source data."""
+    pattern = ""
+    if retrieved:
+        fns = [h.get("function_id") for h in retrieved if h.get("function_id")]
+        mechs = [h.get("mechanism_shape") for h in retrieved if h.get("mechanism_shape")]
+        pattern = f"Retrieved: functions={fns[:3]}, mechanisms={mechs[:3]}"
+
+    return {
+        "derived_by": "graph",
+        "user_text": user_text,
+        "inferred_state": pathway["state"],
+        "selected_pathway": {
+            "phase": pathway["phase"],
+            "function_id": pathway["function_id"],
+            "mechanism_shape": pathway["mechanism_shape"],
+        },
+        "retrieved_pattern": pattern,
+        "source_hyperedges": pathway["source_hyperedges"],
+    }
+
+
+def render_pathway(pathway: dict[str, Any]) -> str:
+    """Template render from graph-selected pathway."""
+    state = pathway["state"]
+    phase = pathway["phase"]
+    fn = pathway["function_id"]
+    mech = pathway["mechanism_shape"]
+    action = pathway["teaching_action"]
+
+    lines = [
+        f"State: {state}",
+        f"Phase: {phase}",
+        f"Function: {fn}",
+        f"Mechanism: {mech}",
+    ]
+    if action:
+        lines.append(f"Action: {action}")
+    if pathway.get("register"):
+        reg = pathway["register"]
+        reg_parts = [f"{k}={v.get('value', '?')}" for k, v in reg.items() if v]
+        if reg_parts:
+            lines.append(f"Register: {', '.join(reg_parts)}")
+
+    lines.append("")
+    lines.append("The graph selected this pathway from UNO-trained weights.")
+    lines.append(f"Source hyperedges: {len(pathway.get('source_hyperedges', []))} retrieved")
+    return "\n".join(lines)

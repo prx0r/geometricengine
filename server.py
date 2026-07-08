@@ -35,12 +35,8 @@ class Handler(SimpleHTTPRequestHandler):
                 )
                 resp = {
                     "final_response": result.get("final_response", ""),
+                    "pathway": result.get("pathway", {}),
                     "graph_mythought": result.get("graph_mythought", {}),
-                    "selected_pathway": result.get("selected_pathway", {}),
-                    "response_form": result.get("response_form", {}),
-                    "classified_labels": result.get("classified_labels", {}),
-                    "retrieved_hyperedges": result.get("retrieved_hyperedges", [])[:3],
-                    "validation_failures": result.get("validation_failures", []),
                     "graph_mythought_id": result.get("pathway_run_id", ""),
                     "user_text": body.get("user_text", ""),
                 }

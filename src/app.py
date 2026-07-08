@@ -39,24 +39,13 @@ if user_text:
             st.session_state.last_result = result
 
             with st.expander("Trace"):
-                col1, col2, col3 = st.columns(3)
+                col1, col2 = st.columns(2)
                 with col1:
-                    st.subheader("Selected Pathway")
-                    st.json(result.get("selected_pathway", {}))
+                    st.subheader("Pathway")
+                    st.json(result.get("pathway", {}))
                 with col2:
                     st.subheader("Graph MyThought")
                     st.json(result.get("graph_mythought", {}))
-                with col3:
-                    st.subheader("Response Form")
-                    st.json(result.get("response_form", {}))
-                    st.subheader("Classification")
-                    st.json(result.get("classified_labels", {}))
-                    st.subheader("Validation")
-                    failures = result.get("validation_failures", [])
-                    if failures:
-                        st.error(failures)
-                    else:
-                        st.success("all checks passed")
 
             st.session_state.last_run_id = result.get("pathway_run_id", "")
 

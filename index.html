@@ -108,10 +108,7 @@ async function sendMessage(text) {
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        thread_id: threadId,
-        user_text: text
-      }),
+      body: JSON.stringify({ thread_id: threadId, user_text: text }),
       signal: controller.signal
     });
     clearTimeout(timeout);
@@ -126,11 +123,8 @@ async function sendMessage(text) {
 
     addMsg('assistant', data.final_response || '(empty response)');
     addTrace({
-      selected_pathway: data.selected_pathway || {},
+      pathway: data.pathway || {},
       graph_mythought: data.graph_mythought || {},
-      response_form: data.response_form || {},
-      classification: data.classified_labels || {},
-      validation: data.validation_failures || [],
     });
 
     lastGraphId = data.graph_mythought_id;
@@ -153,7 +147,6 @@ async function sendMessage(text) {
 
 sendBtn.onclick = () => sendMessage(input.value);
 input.onkeydown = (e) => { if (e.key === 'Enter') sendMessage(input.value); };
-
 addMsg('assistant', 'Engine ready.');
 </script>
 </body>
