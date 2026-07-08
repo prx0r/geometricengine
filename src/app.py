@@ -41,24 +41,22 @@ if user_text:
             with st.expander("Trace"):
                 col1, col2, col3 = st.columns(3)
                 with col1:
-                    st.subheader("Classification")
-                    st.json(result.get("classification", {}))
                     st.subheader("Selected Pathway")
                     st.json(result.get("selected_pathway", {}))
                 with col2:
                     st.subheader("Graph MyThought")
                     st.json(result.get("graph_mythought", {}))
                 with col3:
-                    st.subheader("Pathway Candidates")
-                    candidates = result.get("pathway_candidates", [])
-                    for c in candidates[:3]:
-                        st.markdown(f"**{c.get('function_id', '?')}** score={c.get('score', 0):.3f}")
                     st.subheader("Response Form")
-                    st.write(result.get("response_form", ""))
-                    st.subheader("Retrieved")
-                    for he in result.get("retrieved_hyperedges", [])[:3]:
-                        st.markdown(f"**{he.get('function_id', '?')}** ({he.get('similarity', 0):.2f})")
-                        st.caption(he.get("mythought_text", "")[:120])
+                    st.json(result.get("response_form", {}))
+                    st.subheader("Classification")
+                    st.json(result.get("classified_labels", {}))
+                    st.subheader("Validation")
+                    failures = result.get("validation_failures", [])
+                    if failures:
+                        st.error(failures)
+                    else:
+                        st.success("all checks passed")
 
             st.session_state.last_run_id = result.get("pathway_run_id", "")
 

@@ -126,12 +126,11 @@ async function sendMessage(text) {
 
     addMsg('assistant', data.final_response || '(empty response)');
     addTrace({
-      classification: data.classification || {},
-      graph_mythought: data.graph_mythought || {},
       selected_pathway: data.selected_pathway || {},
-      pathway_candidates: (data.pathway_candidates || []).slice(0,2),
-      response_form: data.response_form || '',
-      retrieved: (data.retrieved_hyperedges || []).slice(0,2),
+      graph_mythought: data.graph_mythought || {},
+      response_form: data.response_form || {},
+      classification: data.classified_labels || {},
+      validation: data.validation_failures || [],
     });
 
     lastGraphId = data.graph_mythought_id;

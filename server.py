@@ -37,10 +37,10 @@ class Handler(SimpleHTTPRequestHandler):
                     "final_response": result.get("final_response", ""),
                     "graph_mythought": result.get("graph_mythought", {}),
                     "selected_pathway": result.get("selected_pathway", {}),
-                    "pathway_candidates": result.get("pathway_candidates", [])[:3],
-                    "response_form": result.get("response_form", ""),
-                    "classification": result.get("classification", {}),
+                    "response_form": result.get("response_form", {}),
+                    "classified_labels": result.get("classified_labels", {}),
                     "retrieved_hyperedges": result.get("retrieved_hyperedges", [])[:3],
+                    "validation_failures": result.get("validation_failures", []),
                     "graph_mythought_id": result.get("pathway_run_id", ""),
                     "user_text": body.get("user_text", ""),
                 }
@@ -60,7 +60,6 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header("Content-Length", str(len(data_bytes)))
         self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
-        self.rfile.read(length)
 
     def log_message(self, fmt, *args):
         pass
